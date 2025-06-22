@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="imagen.jpg">
+    <title>Tratamientos</title>
+</head>
+<body>
+    
+    <!--menu de navegacion-->
+    <div class="menu">
+        <a href="Index.html">Cerrar sesion</a>
+        <a href="vacunas.html">Vacunas</a>
+        <a href="productos.html">Productos de Mascotas</a>
+        <a href="adopciones.html">Adopciones</a>
+        <a href="tratamientos.html">Tratamientos</a>
+    </div>
+
+    <h2>Lista de Medecinas</h2>
+
+    <div class="contenido-lateral">
+    <div class="agregar-pastel-container">
+        <h3>Agregar una Medecina</h3>
+        <form id="formMedicina" class="form-horizontal">
+            <input type="text" id="mascota" placeholder="Nombre de la Mascota" required>
+            <input type="text" id="medicina" placeholder="Medicina" required>
+            <input type="text" id="fechaV" placeholder="Fecha" required>
+            <input type="text" id="Cvendida" placeholder="Cantidad Vendida" required>
+            <input type="number" id="precio" placeholder="Precio" required min="0">
+            <button type="submit">Agregar</button>
+        </form>
+    </div>
+    <!--Lista de pasteles-->
+
+    <div class="tabla-container">
+        <table id="tablaMedicina">
+            <thead>
+                <tr>
+                    <th>N.Mascota</th>
+                    <th>Medicina</th>
+                    <th>Fecha.V</th>
+                    <th>Cantidad Vendida</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!--Aqui se agregara la guia de los Tratamientos-->
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <script>
+        //funcion para cargar y mostrar Tratamientos
+        async function cargarMedicinas() {
+            const res = await fetch('/api/medicinas');
+            const medicinas = await res.json();
+            const tbody = document.querySelector('#tablaMedicina tbody');
+            tbody.innerHTML = medicinas.map(p => `
+            <tr>
+                <td>${p.mascota}</td>
+                <td>${p.medicina}</td>
+                <td>${p.fechaV}</td>
+                <td>${p.Cvendida}</td>
+                <td>${p.precio}</td>
+                <td>
+                    <button class="btn-eliminar" onclick="eliminarMedicina('${p._id}')">Eliminar</button>
+                </td>
+            </tr>`).join('');
+        }
+
+        //funcion para eliminar un Tratamiento
+        async function eliminarMedicina(id){
+            const confirmar = confirm("¿Estas seguro de Eliminar?");
+            if(!confirmar)return;
+            await fetch(`/api/medicinas/${id}`,{method: 'DELETE'});
+            cargarMedicinas();
+        }
+
+        //MANEJAR EL EVENTO SUBMIT
+        document.getElementById('formMedicina').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mascota = document.getElementById('mascota').value;
+            const medicina = document.getElementById('medicina').value;
+            const fechaV = document.getElementById('fechaV').value;
+            const Cvendida = document.getElementById('Cvendida').value;
+            const precio = document.getElementById('precio').value;
+            await fetch ('/api/medicinas/',{
+                method: 'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({ mascota, medicina, fechaV, Cvendida, precio })
+            });
+            document.getElementById('formMedicina').reset;
+            cargarMedicinas();
+        });
+        cargarMedicinas();
+        window.eliminarMedicina = eliminarMedicina;
+    </script>
+</body>
+</html>
+
+
+<style>
+    /* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f2f7f8;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+/* Menú de navegación */
+.menu {
+    background-color: #006d77;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    background: #008891;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 2px solid #005f63;
+}
+
+.menu a:hover {
+    background-color: #00a8b5;
+}
+
+/* Título principal */
+h2 {
+    text-align: center;
+    color: #003f5c;
+    margin-top: 30px;
+    font-size: 32px;
+}
+
+/* Formulario */
+.agregar-pastel-container {
+    background: #e0fbfc;
+    flex: 0.8;
+    min-width: 350px;
+    max-width: 500px;
+    margin: 0;
+    padding: 20px;
+    border: 3px solid #3d5a80;
+    border-radius: 10px;
+}
+
+.agregar-pastel-container h3 {
+    margin-bottom: 20px;
+    color: #293241;
+    font-size: 24px;
+}
+
+.form-horizontal {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-horizontal input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #3d5a80;
+    border-radius: 6px;
+}
+
+.form-horizontal button {
+    background-color: #3d5a80;
+    color: #fff;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Tabla */
+.tabla-container {
+    flex: 1.2;
+    min-width: 500px;
+    max-width: 90%;
+    margin: 0;
+    overflow-x: auto;
+    background: #ffffff;
+    padding: 20px;
+    border: 3px solid #98c1d9;
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #293241;
+    color: #fff;
+}
+
+td {
+    background-color: #f0f0f0;
+}
+
+.btn-eliminar {
+    background-color: #e63946;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background-color: #d62828;
+}
+.contenido-lateral {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    flex-wrap: wrap; 
+    margin: 40px;
+}
+
+.agregar-pastel-container {
+    flex: 1;
+    min-width: 300px;
+}
+
+.tabla-container {
+    flex: 2;
+    min-width: 400px;
+}
+@media (max-width: 768px) {
+    .contenido-lateral {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .agregar-pastel-container,
+    .tabla-container {
+        width: 90%;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+}
+</style>
