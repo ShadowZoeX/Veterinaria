@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');//encriptar
 //crear una instancia de la aplicación express
 const app = express();
 //Definir el puerto donde se ejecutará el server
-const PORT = process.cnv.PORT || 3000; //Usa el puerto que asigna el local 3000
+const PORT = process.env.PORT || 3000; //Usa el puerto que asigna el local 3000
 
 
 //habilitar cors  para permitir peticiones
@@ -22,7 +22,7 @@ app.use(express.static('public'));
 
 //conexion a mongoDB
 //concetarse a veterinaria
-mongoose.connect(process.cnv.MONGODB_URI,{   
+mongoose.connect(process.env.MONGODB_URI,{   
     useNewUrlParser:true, //usa el parser de url
     useUnifiedTopology:true //motor de monitoreo
    })
