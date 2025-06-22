@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');//encriptar
 //crear una instancia de la aplicación express
 const app = express();
 //Definir el puerto donde se ejecutará el server
-const PORT = 3000;
+const PORT = process.cnv.PORT || 3000; //Usa el puerto que asigna el local 3000
 
 
 //habilitar cors  para permitir peticiones
@@ -21,16 +21,16 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 //conexion a mongoDB
-//concetarse a pasteleria
-mongoose.connect('mongodb://localhost:27017/Veterinaria',{   
+//concetarse a veterinaria
+mongoose.connect(process.cnv.MONGODB_URI,{   
     useNewUrlParser:true, //usa el parser de url
     useUnifiedTopology:true //motor de monitoreo
    })
 
    //si la conexion es exitosa, mmuestra mensaje
-   .then(() => console.log('conectado a mongo'))
+   .then(() => console.log('CONECTANDO A MONGODB ATLAS'))
     //si hay un error, muestra mensaje
-    .catch(err => console.error(err));
+    .catch(err => console.error('ERROR DE CONEXION', err));
 
     //esquemas y modelos 
 
